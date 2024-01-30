@@ -16,12 +16,16 @@ void setup() {
 }
 
 void loop() {
-    delay(50); //
+
+    int command = 1;
+    
+    delay(1000); //
     Serial.println("Write Data to Slave");
 
     Wire.beginTransmission(SLAVE_ADDR);
-    Wire.write(1);
+    Wire.write(command);
     Wire.endTransmission();
+
 
     // TRY THIS AFTER
     // delay(50);
