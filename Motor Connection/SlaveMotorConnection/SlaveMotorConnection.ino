@@ -44,30 +44,16 @@ void receiveEvent(){
 
 
 void loop() {
-  delay(50); // Added the missing semicolon
-
+  //delay(50); 
   if (receivedValue == 1) {
-    int j;
     int i;
-
-    for (j = 0; j <= 4; j++) {
-      Direction = -Direction;
-      if (Direction < 0) {
-        digitalWrite(M1dirpin, HIGH);
-        digitalWrite(M2dirpin, HIGH);
-      } else {
-        digitalWrite(M1dirpin, LOW);
-        digitalWrite(M2dirpin, LOW);
-      }
-
-      for (i = 0; i <= 1250; i++) {
-        digitalWrite(M1steppin, LOW);
-        digitalWrite(M2steppin, LOW);
-        delayMicroseconds(2);
-        digitalWrite(M1steppin, HIGH); // Rising step
-        digitalWrite(M2steppin, HIGH);
-        delayMicroseconds(StepRate);
-      }
+    for (i = 0; i <= 12500; i++) {
+      digitalWrite(M1steppin, LOW);
+      digitalWrite(M2steppin, LOW);
+      delayMicroseconds(2);
+      digitalWrite(M1steppin, HIGH); // Rising step
+      digitalWrite(M2steppin, HIGH);
+      delayMicroseconds(StepRate);
     }
 
     // Reset the received value after processing
