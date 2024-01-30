@@ -20,7 +20,7 @@ void loop() {
     Serial.println("Write Data to Slave");
 
     Wire.beginTransmission(SLAVE_ADDR);
-    Wire.write(0);
+    Wire.write(3);
     Wire.endTransmission();
 
     // Read Response from Slave

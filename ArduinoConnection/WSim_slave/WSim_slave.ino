@@ -19,12 +19,29 @@ void setup() {
 
 void receiveEvent(){
   // Read while data received
+  while (Wire.available() > 0){
+    byte receivedByte = Wire.read();
+    Serial.print("Received byte: ");
 
-  while (0 < Wire.available()){
-    byte x = Wire.read();
+    if (receivedByte == 0){
+        Serial.println("Velocity: 0 m/s");
+    }
+    else if (receivedByte == 1){
+        Serial.println("Velocity: 1 m/s");
+    }
+    else if (receivedByte == 2){
+        Serial.println("Velocity: 2 m/s");
+    }
+    else if (receivedByte == 3){
+        Serial.println("Velocity: 3 m/s");
+    }
+    else if (receivedByte == 4){
+        Serial.println("Velocity: 3 m/s");
+    }
+    else if (receivedByte == 5){
+        Serial.println("Velocity: 4 m/s");
+    }
   }
-
-  Serial.println("Receive Event");
 }
 
 void requestEvent(){
@@ -44,5 +61,5 @@ void requestEvent(){
 
 
 void loop() {
-  delay(50)
+  delay(50);
 }
