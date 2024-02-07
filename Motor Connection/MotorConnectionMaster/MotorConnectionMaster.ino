@@ -1,49 +1,34 @@
-// If something doesn't work use a 10k pull-up resistor
-// GROUND BOTH ARDUINO's TOGETHER
-// CONNECT BOTH ANALOG PIN A4 AND ANALOG PIN A5
-
 #include <Wire.h>
 
-// Define Slave I2C address and Slave Answer Size
 #define SLAVE_ADDR 9
-#define ANSWER_SIZE 5
+
+int maxVelocity = 5; // This variable can be changed using buttons. This basically limits the maximum speed that the simulator can go at.
 
 void setup() {  
   Wire.begin();
-
   Serial.begin(9600);
   Serial.println("I2C Testing on Arduino");
 }
 
 void loop() {
-    delay(50); //
-    Serial.println("Write Data to Slave");
+  // Sweep through velocity levels for both directions
+  for (int direction = -1; direction <= 1; direction += 2) { // direction = -1 for negative direction, 1 for positive direction
+    for (int velocity = 0; velocity <= 5; velocity++) {
+      // Pack direction and velocity into a single byte
+      byte dataToSend = (direction == 1 ? 0x00 : 0x80) | velocity; // Direction in bit 7, velocity in bits 0-6
+      
+      // Send data to the slave
+      Serial.print("Sending data to Slave: Direction=");
+      Serial.print(direction);
+      Serial.print(", Velocity=");
+      Serial.println(velocity);
 
-    Wire.beginTransmission(SLAVE_ADDR);
-    Wire.write(1);
-    Wire.endTransmission();
-
-    // TRY THIS AFTER
-    // delay(50);
-    // Serial.println("Write Data to Slave");
-
-    // uint8_t value = 1;
-    // Wire.beginTransmission(SLAVE_ADDR);
-    // Wire.write((uint8_t*)&value, sizeof(value));
-    // Wire.endTransmission();
-
-    // Read Response from Slave
-    // Read back 5 characters
-    // Don't need right now since we are only using 1 way transmission
-    // Wire.requestFrom(SLAVE_ADDR, ANSWER_SIZE);
-
-    // // Add characters to string
-
-    // String response = "";
-    // while(Wire.available()){
-    //   char b = Wire.read();
-    //   response += b;
-    // }
-
-    // Serial.println(response);
+      Wire.beginTransmission(SLAVE_ADDR);
+      Wire.write(dataToSend);
+      Wire.endTransmission();
+      
+      // Wait for some time before sending the next data
+      delay(1000);
+    }
+  }
 }

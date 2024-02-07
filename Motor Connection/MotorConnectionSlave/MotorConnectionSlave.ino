@@ -6,72 +6,76 @@
 
 int M1dirpin = 7; //Motor X direction pin
 int M1steppin = 6; //Motor X step pin
-int M1en=8; //Motor X enable pin
+int M1en = 8; //Motor X enable pin
 int M2dirpin = 4; //Motor Y direction pin
 int M2steppin = 5; //Motor Y step pin
-int M2en=12; //Motor Y enable pin
+int M2en = 12; //Motor Y enable pin
 
-int Direction = 1; //Control Motor Direction
-int StepRate = 3; //Control Rotational Speed
+int StepRate = 5; //Control Rotational Speed
 
 byte receivedValue = 0; // Variable to store the received value
 
+int direction;
+int velocity;
+int actualStepRate;
+
 void setup() {
-  pinMode(M1dirpin,OUTPUT);
-  pinMode(M1steppin,OUTPUT);
-  pinMode(M1en,OUTPUT);
-  pinMode(M2dirpin,OUTPUT);
-  pinMode(M2steppin,OUTPUT);
-  pinMode(M2en,OUTPUT);
-  digitalWrite(M1en,LOW);// Low Level Enable
-  digitalWrite(M2en,LOW);// Low Level 
+  pinMode(M1dirpin, OUTPUT);
+  pinMode(M1steppin, OUTPUT);
+  pinMode(M1en, OUTPUT);
+  pinMode(M2dirpin, OUTPUT);
+  pinMode(M2steppin, OUTPUT);
+  pinMode(M2en, OUTPUT);
+  digitalWrite(M1en, LOW); // Low Level Enable
+  digitalWrite(M2en, LOW); // Low Level 
 
   Wire.begin(SLAVE_ADDR);
-  // Wire.on Request(requestEvent); // 1 Way connection ONLY
   Wire.onReceive(receiveEvent);
   Serial.begin(9600);
   Serial.println("I2C Motor Connection");
 }
 
-void receiveEvent(){
-  // Read while data received
+void receiveEvent(int byteCount) {
+  if (byteCount >= 1) {
+    byte dataReceived = Wire.read();
+    
+    // Extract direction and velocity from the received byte
+    direction = (dataReceived & 0x80) == 0 ? 1 : -1; // Update the global direction variable
+    velocity = dataReceived & 0x0F; // Bits 0-6 represent velocity
+    
+    actualStepRate = 8 - velocity;
 
-  while (Wire.available() > 0) {
-    receivedValue = Wire.read();
-    Serial.println("Receive Event: " + String(receivedValue));
+    // Print received data
+    Serial.print("Received data from Master: Direction=");
+    Serial.print(direction);
+    Serial.print(", Velocity=");
+    Serial.println(velocity);
   }
 }
 
 
 void loop() {
-  delay(50); // Added the missing semicolon
+  delay(50); 
 
-  if (receivedValue == 1) {
-    int j;
-    int i;
-
-    for (j = 0; j <= 4; j++) {
-      Direction = -Direction;
-      if (Direction < 0) {
-        digitalWrite(M1dirpin, HIGH);
-        digitalWrite(M2dirpin, HIGH);
-      } else {
-        digitalWrite(M1dirpin, LOW);
-        digitalWrite(M2dirpin, LOW);
-      }
-
-      for (i = 0; i <= 1250; i++) {
-        digitalWrite(M1steppin, LOW);
-        digitalWrite(M2steppin, LOW);
-        delayMicroseconds(2);
-        digitalWrite(M1steppin, HIGH); // Rising step
-        digitalWrite(M2steppin, HIGH);
-        delayMicroseconds(StepRate);
-      }
+  for(int j = 0; j <= 1; j++) {    
+    if (direction < 0) {
+      digitalWrite(M1dirpin, HIGH);
+      digitalWrite(M2dirpin, HIGH);
+    } else {
+      digitalWrite(M1dirpin, LOW);
+      digitalWrite(M2dirpin, LOW);
     }
-
-    // Reset the received value after processing
-    receivedValue = 0;
+    
+    for (int i = 0; i <= 250; i++) {
+      digitalWrite(M1steppin, LOW);
+      digitalWrite(M2steppin, LOW);
+      delayMicroseconds(2);
+      digitalWrite(M1steppin, HIGH); // Rising step
+      digitalWrite(M2steppin, HIGH);
+      delay(actualStepRate); 
+    }
   }
+  
+  // Reset the received value after processing
+  receivedValue = 0;
 }
- 
