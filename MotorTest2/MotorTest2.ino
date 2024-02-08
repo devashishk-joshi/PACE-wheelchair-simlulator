@@ -11,7 +11,7 @@ int M2steppin = 5; //Motor Y step pin
 int M2en=12; //Motor Y enable pin
 
 int Direction = 1; //Control Motor Direction
-int StepRate = 15; //Control Rotational Speed
+int StepRate = 10; //Control Rotational Speed
 
 void setup()
 {
@@ -31,7 +31,7 @@ void loop()
 {
   int j;
   int i;
-
+7
   for(j=0;j<=4;j++)
   {
     Direction = -Direction;
@@ -45,7 +45,7 @@ void loop()
       digitalWrite(M1dirpin,LOW);
       digitalWrite(M2dirpin,LOW);
       }
-    for(i=0;i<=220;i++)
+    for(i=0;i<=1220;i++)
     {
       digitalWrite(M1steppin,LOW);
       digitalWrite(M2steppin,LOW);

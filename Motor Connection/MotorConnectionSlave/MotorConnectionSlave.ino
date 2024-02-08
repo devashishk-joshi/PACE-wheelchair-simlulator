@@ -55,8 +55,6 @@ void receiveEvent(int byteCount) {
 
 
 void loop() {
-  delay(50); 
-
   for(int j = 0; j <= 1; j++) {    
     if (direction < 0) {
       digitalWrite(M1dirpin, HIGH);
